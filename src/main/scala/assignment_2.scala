@@ -22,6 +22,15 @@ object question2 extends App {
     val beds_covid = columns(3).toInt
     rows += Row(beds, beds_covid)
   }
+  // 5. Calculate the total of column 3 and 4
+  val totalBeds = rows.map(_.beds).sum
+  val totalCovidBeds = rows.map(_.beds_covid).sum
+  // 6. Calculate the ratio of the total and print result
+  println("Question 2")
+  println(f"The total bed dedicated for COVID-19 is $totalCovidBeds and total of available hospital bed is $totalBeds.")
+
+  val ratio = totalCovidBeds.toDouble / totalBeds
+  println(f"Therefore, the ratio of beds for COVID-19 to available beds is $ratio")
 }
 
 // Question 3: What are the averages of  individuals in category x  where x can be suspected/probable, COVID-19 positive, or non-COVID is being admitted to hospitals for each state?
