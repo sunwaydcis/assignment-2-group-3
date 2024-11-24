@@ -1,22 +1,23 @@
 import scala.collection.mutable.ArrayBuffer
-import scala.io.Source
-import scala.collection.mutable
+import scala.io.Source //to read csv files
+import scala.collection.mutable //to use Map to accumulate beds counts by state
 
 val source = Source.fromFile("src/main/resources/hospital.csv") //get the hospital data
 
 // Question 1: Which state has the highest total hospital bed?
   object HospitalDataAnalysis extends App {
-    val stateBedCounts: mutable.Map[String, Int] = mutable.Map().withDefaultValue(0)
+    val stateBedCounts: mutable.Map[String, Int] = mutable.Map().withDefaultValue(0) /* stores the total
+    hospital bed count for each state */
 
     val lines = source.getLines()
-    lines.next()
+    lines.next() //skip the header
     lines.foreach { line =>
       val columns = line.split(",").map(_.trim)
-      val state = columns(1)
-      val beds = columns(2).toInt
+      val state = columns(1) //state column
+      val beds = columns(2).toInt //beds column
       stateBedCounts(state) += beds
     }
-
+    //to find the state with the highest total hospital beds
     val (highestState, highestBeds) = stateBedCounts.maxBy(_._2)
 
     //Output the result
