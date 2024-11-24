@@ -53,3 +53,24 @@ val source = Source.fromFile("src/main/resources/hospital.csv") //get the hospit
   }
 
 // Question 3: What are the averages of  individuals in category x  where x can be suspected/probable, COVID-19 positive, or non-COVID is being admitted to hospitals for each state?
+  object question3 extends App{
+    //Case class to represent each record in the data set
+    case class HospitalData(state: String, admittedPUI: Int, admittedCovid: Int, admittedNonCovid: Int)
+
+    //Function to parse a CSV line into a HospitalData class ensuring only valid rows are processed
+    def parseLine(line: String): Option[HospitalData] = {
+      val columns = line.split(",").map(_.trim)
+      try {
+        Some(
+          HospitalData(
+            state = columns(1), // State name
+            admittedPUI = columns(5).toInt, // Admitted suspected/probable
+            admittedCovid = columns(6).toInt, // Admitted COVID-19
+            admittedNonCovid = columns(7).toInt // Admitted non-COVID
+          )
+        )
+      } catch {
+        case _: Exception => None // Skip lines that can't be parsed
+      }
+    }
+}
