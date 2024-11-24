@@ -1,10 +1,22 @@
 import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
+import scala.collection.mutable
 
 val source = Source.fromFile("src/main/resources/hospital.csv") //get the hospital data
 
 // Question 1: Which state has the highest total hospital bed?
+object HospitalBeds {
+  val stateBedCounts: mutable.Map[String,Int] = mutable.Map().withDefaultValue(0)
 
+  val lines = source.getLines()
+  lines.next()
+  lines.foreach { line =>
+    val columns =line.split(",").map(_.trim)
+    val state = columns(1)
+    val beds = columns(2).toInt
+    stateBedCounts(state) += beds
+  }
+}
 
 // Question 2: What are the ratio of bed dedicated for COVID-19 to total of available hospital bed in the dataset?
 object question2 extends App {
