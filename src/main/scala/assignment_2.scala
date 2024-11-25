@@ -1,17 +1,25 @@
 import scala.collection.mutable.ArrayBuffer
 import scala.io.Source //to read csv files
 import scala.collection.mutable //to use Map to accumulate beds counts by state
+import scala.math.BigDecimal
 
-val source = Source.fromFile("src/main/resources/hospital.csv") //get the hospital data
+// Shared functionality to read and get lines from hospital.csv
+trait CSVAnalysis{
+  def source: Source = Source.fromFile("src/main/resources/hospital.csv") //get the hospital data
+  def fetchLines: Iterator[String] = { // read lines as lazy iterator one line at a time -> no need to load into memory
+    val lines = source.getLines()
+    lines.next() // skipping the header in the csv file. (date,state,beds...)
+    lines
+  }
+}
 
 // Question 1: Which state has the highest total hospital bed?
-  object HospitalDataAnalysis extends App {
+class Question1 extends CSVAnalysis {
+  def analyse(): Unit = {
     val stateBedCounts: mutable.Map[String, Int] = mutable.Map().withDefaultValue(0) /* stores the total
-    hospital bed count for each state */
+        hospital bed count for each state */
 
-    val lines = source.getLines()
-    lines.next() //skip the header
-    lines.foreach { line =>
+    for (line <- fetchLines){
       val columns = line.split(",").map(_.trim)
       val state = columns(1) //state column
       val beds = columns(2).toInt //beds column
@@ -19,41 +27,46 @@ val source = Source.fromFile("src/main/resources/hospital.csv") //get the hospit
     }
     //to find the state with the highest total hospital beds
     val (highestState, highestBeds) = stateBedCounts.maxBy(_._2)
-
     //Output the result
-    println(s"Question1")
+    println(s"# Question 1")
     println(s"State with the highest total hospital beds: $highestState ($highestBeds beds)")
   }
+}
   // Question 2: What are the ratio of bed dedicated for COVID-19 to total of available hospital bed in the dataset?
-  object question2 extends App {
-    // 1. Define the data structure of the collection
-    case class Row(beds: Int, beds_covid: Int) // Only reading necessary data
+class Question2 extends CSVAnalysis {
+  // 1. Define the data structure of the collection
+  case class Row(beds: Int, beds_covid: Int) // Only reading necessary data
 
+  def analyse(): Unit = {
     // 2. Initialize collection -> Arraybuffer, and store the Row(s)
     val rows = ArrayBuffer[Row]()
-    // 3. Read the csv files
-    val lines = source.getLines()
-    lines.next() // skipping the header in the csv file. (date,state,beds...)
-    // 4. Parsing the csv file for the 3rd (index 2) and 4th (index 3) column only
-    for (line <- lines) {
+
+    // 3. Parsing the csv file for the 3rd (index 2) and 4th (index 3) column only
+    for (line <- fetchLines) {
       val columns = line.split(",")
       val beds = columns(2).toInt
       val beds_covid = columns(3).toInt
       rows += Row(beds, beds_covid)
     }
-    // 5. Calculate the total of column 3 and 4
+    // 4. Calculate the total of column 3 and 4
     val totalBeds = rows.map(_.beds).sum
     val totalCovidBeds = rows.map(_.beds_covid).sum
-    // 6. Calculate the ratio of the total and print result
-    println("Question 2")
-    println(f"The total bed dedicated for COVID-19 is $totalCovidBeds and total of available hospital bed is $totalBeds.")
 
-    val ratio = totalCovidBeds.toDouble / totalBeds
-    println(f"Therefore, the ratio of beds for COVID-19 to available beds is $ratio")
+    // 5. Calculate the ratio of the total and print result
+    println("# Question 2")
+    println(f"The total bed dedicated for COVID-19 is $totalCovidBeds and total of available hospital bed is $totalBeds.")
+    if (totalBeds != 0){
+      val ratio = totalCovidBeds.toDouble / totalBeds
+      val roundedRatio = BigDecimal(ratio).setScale(3, BigDecimal.RoundingMode.HALF_UP).toDouble // Rounded to 3 decimal places
+      println(f"Therefore, the ratio of beds for COVID-19 to available beds is $roundedRatio") 
+    } else {
+      println("There is no amount of beds recorded in the database.")
+    }
   }
+}
 
 // Question 3: What are the averages of  individuals in category x  where x can be suspected/probable, COVID-19 positive, or non-COVID is being admitted to hospitals for each state?
-  object question3 extends App{
+class Question3 extends CSVAnalysis{
     //Case class to represent each record in the data set
     case class HospitalData(state: String, admittedPUI: Int, admittedCovid: Int, admittedNonCovid: Int)
 
@@ -73,4 +86,13 @@ val source = Source.fromFile("src/main/resources/hospital.csv") //get the hospit
         case _: Exception => None // Skip lines that can't be parsed
       }
     }
+}
+
+// Run questions to get answers
+object MainApp extends App {
+  val question1 = new Question1
+  question1.analyse()
+
+  val question2 = new Question2
+  question2.analyse()
 }
