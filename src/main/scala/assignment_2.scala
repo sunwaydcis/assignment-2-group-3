@@ -107,7 +107,20 @@ class Question3 extends CSVAnalysis{
         }
       }
 
+      //calculate averages and print results
+      println("# Question 3")
+      println("State-wide averages  of admitted individuals for each category: ")
+      for ((state, (totalPUI, countPUI, totalCovid, countCovid, totalNonCovid, countNonCovid)) <- stateData) {
+        val avgPUI = if (countPUI > 0) totalPUI.toDouble / countPUI else 0.0
+        val avgCovid = if (countCovid > 0) totalCovid.toDouble / countCovid else 0.0
+        val avgNonCovid = if (countNonCovid > 0) totalNonCovid.toDouble / countNonCovid else 0.0
 
+        println(
+          f"$state: Suspected/Probable = ${BigDecimal(avgPUI).setScale(2, BigDecimal.RoundingMode.HALF_UP).toDouble}, " +
+          f"COVID-19 Positive = ${BigDecimal(avgCovid).setScale(2, BigDecimal.RoundingMode.HALF_UP).toDouble}, " +
+          f"Non-COVID = ${BigDecimal(avgCovid).setScale(2, BigDecimal.RoundingMode.HALF_UP).toDouble}"
+        )
+      }
     }
 }
 
