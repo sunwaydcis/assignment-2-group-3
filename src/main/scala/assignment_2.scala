@@ -86,6 +86,29 @@ class Question3 extends CSVAnalysis{
         case _: Exception => None // Skip lines that can't be parsed
       }
     }
+
+    def analyse(): Unit = {
+      //Map to accumulate totals and counts for each state and category
+      val stateData = mutable.Map[String, (Int, Int, Int, Int, Int, Int)]()
+        .withDefaultValue((0,0,0,0,0,0))
+      // Format: (totalPUI, countPUI, totalCovid, countCovid, totalNonCovid, countNonCovid)
+
+      //Process each line and update and stateData map
+      for (line <- fetchLines) {
+        parseLine(line)match {
+          case Some(data) =>
+            val (totalPUI, countPUI, totalCovid, countCovid, totalNonCovid, countNonCovid) = stateData(data.state)
+            stateData(data.state) = (
+              totalPUI + data.admittedPUI, countPUI + 1,
+              totalCovid + data.admittedCovid, countCovid + 1,
+              totalNonCovid + data.admittedNonCovid, countNonCovid + 1
+            )
+          case None => //To skip the invalid rows
+        }
+      }
+
+
+    }
 }
 
 // Run questions to get answers
@@ -95,4 +118,7 @@ object MainApp extends App {
 
   val question2 = new Question2
   question2.analyse()
+
+  val question3 = new Question3
+  question3.analyse()
 }
