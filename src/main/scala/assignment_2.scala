@@ -34,25 +34,25 @@ class Question1 extends CSVAnalysis {
 }
   // Question 2: What are the ratio of bed dedicated for COVID-19 to total of available hospital bed in the dataset?
 class Question2 extends CSVAnalysis {
-  // 1. Define the data structure of the collection
+  // Define the data structure of the collection
   case class Row(beds: Int, beds_covid: Int) // Only reading necessary data
 
   def analyse(): Unit = {
-    // 2. Initialize collection -> Arraybuffer, and store the Row(s)
+    // Initialize collection -> Arraybuffer, and store the Row(s)
     val rows = ArrayBuffer[Row]()
 
-    // 3. Parsing the csv file for the 3rd (index 2) and 4th (index 3) column only
+    // Parsing the csv file for the 3rd (index 2) and 4th (index 3) column only
     for (line <- fetchLines) {
       val columns = line.split(",")
       val beds = columns(2).toInt
       val beds_covid = columns(3).toInt
       rows += Row(beds, beds_covid)
     }
-    // 4. Calculate the total of column 3 and 4
+    // Calculate the total of column 3 and 4
     val totalBeds = rows.map(_.beds).sum
     val totalCovidBeds = rows.map(_.beds_covid).sum
 
-    // 5. Calculate the ratio of the total and print result
+    // Calculate the ratio of the total and print result
     println("# Question 2")
     println(f"The total bed dedicated for COVID-19 is $totalCovidBeds and total of available hospital bed is $totalBeds.")
     if (totalBeds != 0){
