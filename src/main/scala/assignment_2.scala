@@ -57,7 +57,7 @@ class Question2 extends CSVAnalysis {
     println(f"The total bed dedicated for COVID-19 is $totalCovidBeds and total of available hospital bed is $totalBeds.")
     if (totalBeds != 0){
       val ratio = totalCovidBeds.toDouble / totalBeds
-      val roundedRatio = BigDecimal(ratio).setScale(3, BigDecimal.RoundingMode.HALF_UP).toDouble // Rounded to 3 decimal places
+      val roundedRatio = BigDecimal(ratio).setScale(2, BigDecimal.RoundingMode.HALF_UP).toDouble // Rounded to 3 decimal places
       println(f"Therefore, the ratio of beds for COVID-19 to available beds is $roundedRatio") 
     } else {
       println("There is no amount of beds recorded in the database.")
@@ -70,16 +70,22 @@ class Question3 extends CSVAnalysis{
     //Case class to represent each record in the data set
     case class HospitalData(state: String, admittedPUI: Int, admittedCovid: Int, admittedNonCovid: Int)
 
+    //Indices for the CSV columns
+    val stateIndex = 1
+    val admittedPUIIndex = 5
+    val admittedCovidIndex = 6
+    val admittedNonCovidIndex = 7
+
     //Function to parse a CSV line into a HospitalData class ensuring only valid rows are processed
     def parseLine(line: String): Option[HospitalData] = {
       val columns = line.split(",").map(_.trim)
       try {
         Some(
           HospitalData(
-            state = columns(1), // State name
-            admittedPUI = columns(5).toInt, // Admitted suspected/probable
-            admittedCovid = columns(6).toInt, // Admitted COVID-19
-            admittedNonCovid = columns(7).toInt // Admitted non-COVID
+            state = columns(stateIndex), // State column index
+            admittedPUI = columns(admittedPUIIndex).toInt, // Suspected/probable column index
+            admittedCovid = columns(admittedCovidIndex).toInt, //  COVID-19 column index
+            admittedNonCovid = columns(admittedNonCovidIndex).toInt // Non-COVID column index
           )
         )
       } catch {
