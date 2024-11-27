@@ -15,14 +15,18 @@ trait CSVAnalysis{
 
 // Question 1: Which state has the highest total hospital bed?
 class Question1 extends CSVAnalysis {
+  //define the column indices as constants for better maintainability
+  val StateColumnIndex = 1
+  val BedColumnIndex = 2
+
   def analyse(): Unit = {
     val stateBedCounts: mutable.Map[String, Int] = mutable.Map().withDefaultValue(0) /* stores the total
         hospital bed count for each state */
 
     for (line <- fetchLines){
       val columns = line.split(",").map(_.trim)
-      val state = columns(1) //state column
-      val beds = columns(2).toInt //beds column
+      val state = columns(StateColumnIndex) //state column
+      val beds = columns(BedColumnIndex).toInt //beds column
       stateBedCounts(state) += beds
     }
     //to find the state with the highest total hospital beds
