@@ -5,7 +5,7 @@ import scala.math.BigDecimal
 // Shared functionality to read and get lines from hospital.csv
 trait CSVAnalysis{
   def source: Source = Source.fromFile("src/main/resources/hospital.csv") //get the hospital data
-  
+
   //Parse all lines and store them in memory as a list
   lazy val data: List[Array[String]] = {
     val lines = source.getLines()
@@ -39,8 +39,8 @@ class Question1 (data: List[Array[String]]) {
 }
   // Question 2: What are the ratio of bed dedicated for COVID-19 to total of available hospital bed in the dataset?
 class Question2 (data: List[Array[String]]) {
-  // Define the data structure of the collection
-  def analyse(): Unit = {
+  // Analyse specific columns needed to answer the question
+    def analyse(): Unit = {
     // Calculate the total of column 3 and 4
     val totalBeds = data.map(_(2).toInt).sum
     val totalCovidBeds = data.map(_(3).toInt).sum
