@@ -40,8 +40,6 @@ class Question1 (data: List[Array[String]]) {
   // Question 2: What are the ratio of bed dedicated for COVID-19 to total of available hospital bed in the dataset?
 class Question2 (data: List[Array[String]]) {
   // Define the data structure of the collection
-  case class Row(beds: Int, beds_covid: Int) // Only reading necessary data
-
   def analyse(): Unit = {
     // Calculate the total of column 3 and 4
     val totalBeds = data.map(_(2).toInt).sum
