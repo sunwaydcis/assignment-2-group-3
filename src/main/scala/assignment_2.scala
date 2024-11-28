@@ -1,4 +1,3 @@
-import scala.collection.mutable.ArrayBuffer
 import scala.io.Source //to read csv files
 import scala.collection.mutable //to use Map to accumulate beds counts by state
 import scala.math.BigDecimal
